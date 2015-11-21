@@ -17,18 +17,13 @@ mvn install:install-file -Dfile=./rewards-project-1.0.jar -DgroupId=example \
 
 It is also possible to upload the JAR to BPM Suite/jBPM 6 artifact repository. Just go to Artifacts Repository screen and upload the jar `rewards-project-1.0.jar`:
 
-IMG OF THE UPLOAD
+![Artifact Repository](/images/artifact-repository.png?raw=true)
 
 ### Deploying 
 
-Now that the artifact is installed, you must deploy it to make the process available in the server process engine. You can deploy it using the REST API, for example:
+Now that the artifact is installed, you must deploy it to make the process available in the server process engine. You can deploy it using the REST API or use the web interface in the Deploy screen:
 
-CURL TO DEPLOY
-
-
-Or using the web interface in the Deploy screen
-
-IMG OF THE DEPLOY SCREEN
+![Process Deployment](/images/process-deployments.png?raw=true)
 
 
 ## Run the client application 
@@ -50,5 +45,6 @@ Edit the constants in class `RewardsService` to match the installation you are u
 Finally you should be able to run the JavaFX application. Use the following maven command to run it:
 
 ~~~
-mvn exec:exec
+cd rewards-client
+mvn clean package exec:java -Dexec.mainClass="org.jugvale.rewardclient.App"
 ~~~
