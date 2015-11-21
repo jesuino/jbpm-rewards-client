@@ -1,9 +1,8 @@
 package org.jugvale.rewardclient;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -23,6 +22,15 @@ import javafx.stage.Stage;
 public class App extends Application {
 
 	static RewardService service;
+	
+	// Events
+	private Runnable UPDATE_TASKS;
+	private Runnable UPDATE_HISTORY_ACTION;
+		
+	// Panes
+	private TitledPane PNL_TASKS;
+
+	private Accordion ACCORDION_ACTIONS;
 
 	public static void main(String[] args) throws Exception {
 		service = RewardService.getInstance();
@@ -31,11 +39,11 @@ public class App extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		Accordion accordionActions = new Accordion(giveReward(), tasks(),
+		ACCORDION_ACTIONS = new Accordion(giveReward(), tasks(),
 				history());
 		Label lblTitle = new Label("Rewards APP");
 		lblTitle.setFont(Font.font(25));
-		Scene scene = new Scene(new VBox(lblTitle, accordionActions), 700, 600);
+		Scene scene = new Scene(new VBox(lblTitle, ACCORDION_ACTIONS), 700, 600);
 		stage.setScene(scene);
 		stage.setTitle("Rewards App!");
 		stage.show();
@@ -43,61 +51,63 @@ public class App extends Application {
 
 	private TitledPane giveReward() {
 		TextField txtEmployeeName = new TextField();
+		txtEmployeeName.setPromptText("Suggest a reward for a colleague");
 		Button btnStartRewardsProcess = new Button("Start RewardProcess");
 		HBox hbGiveReward = new HBox(new Label("Colleague name"),
 				txtEmployeeName, btnStartRewardsProcess);
 		hbGiveReward.setSpacing(15);
-		btnStartRewardsProcess.setOnAction(e -> service
-				.startRewardProcess(txtEmployeeName.getText()));
+		btnStartRewardsProcess.setOnAction(e -> { 
+			service.startRewardProcess(txtEmployeeName.getText());
+			txtEmployeeName.setText("");
+			Platform.runLater(UPDATE_TASKS);
+			ACCORDION_ACTIONS.setExpandedPane(PNL_TASKS);
+		});
 		return new TitledPane("Give a Reward to someone!", hbGiveReward);
 	}
 
 	private TitledPane tasks() {
-		Button btnUpdate = new Button("Update List");
 		Button btnSubmit = new Button("Submit");
 		CheckBox chkApprove = new CheckBox("Approve?");
 		HBox hbBottom = new HBox(chkApprove, btnSubmit);
 		TableView<RewardTask> tbl = new TableView<>();
-		VBox vbHistory = new VBox(btnUpdate, tbl, hbBottom);
+		VBox vbHistory = new VBox(tbl, hbBottom);
 		tbl.getColumns().add(
 				propertyColumn("Employee Name", "employeeName", 130));
 		tbl.getColumns().add(propertyColumn("Created On", "created", 260));
 		tbl.getColumns().add(propertyColumn("Name", "name", 160));
 		hbBottom.setSpacing(20);
 		vbHistory.setSpacing(10);
-		EventHandler<ActionEvent> updateAction = e -> {
+		UPDATE_TASKS = () -> {
 			tbl.getItems().setAll(service.getTasks());
 		};
 		BooleanBinding selected = tbl.getSelectionModel()
 				.selectedItemProperty().isNull();
 		chkApprove.disableProperty().bind(selected);
 		btnSubmit.disableProperty().bind(selected);
-		btnUpdate.setOnAction(updateAction);
 		btnSubmit.setOnAction(e -> {
 			RewardTask rt = tbl.getSelectionModel().getSelectedItem();
 			service.doTask(rt.getTaskId(), chkApprove.isSelected());
-			updateAction.handle(e);
+			Platform.runLater(UPDATE_TASKS);
+			Platform.runLater(UPDATE_HISTORY_ACTION);
 		});
-		updateAction.handle(null);
-		return new TitledPane("Approve Rewards", vbHistory);
+		Platform.runLater(UPDATE_TASKS);
+		PNL_TASKS = new TitledPane("Approve Rewards", vbHistory);
+		return PNL_TASKS;
 	}
 
 	private TitledPane history() {
 		ListView<String> listHistory = new ListView<>();
-		Button btnUpdate = new Button("Update");
 		Button btnClear = new Button("Clear");
-		HBox hbTop = new HBox(btnUpdate, btnClear);
-		hbTop.setSpacing(20);
-		VBox vbHistory = new VBox(hbTop, listHistory);
+		VBox vbHistory = new VBox(btnClear, listHistory);
 		vbHistory.setSpacing(15);
-		EventHandler<ActionEvent> updateAction = e -> listHistory.getItems()
+		UPDATE_HISTORY_ACTION = () -> listHistory.getItems()
 				.setAll(service.getAllProcessesSummary());
-		btnUpdate.setOnAction(updateAction);
+
 		btnClear.setOnAction(e -> {
 			service.clearHistory();
-			updateAction.handle(e);
+			Platform.runLater(UPDATE_HISTORY_ACTION);
 		});
-		updateAction.handle(null);
+		Platform.runLater(UPDATE_HISTORY_ACTION);
 		return new TitledPane("Rewards history", vbHistory);
 	}
 
@@ -108,5 +118,4 @@ public class App extends Application {
 		column.setMinWidth(width);
 		return column;
 	}
-
 }

@@ -17,8 +17,14 @@ import org.kie.api.runtime.process.ProcessInstance;
 import org.kie.api.task.TaskService;
 import org.kie.remote.client.api.RemoteRuntimeEngineFactory;
 
+/**
+ * @author wsiqueir
+ *
+ */
 public class RewardService {
 
+	
+	// jBPM Process and Project constants
 	private final String P_EMPLOYEE = "employeeName";
 	private final String P_RESULT = "result";
 	private final String T_APPROVAL_VAR = "_approval";
@@ -27,8 +33,9 @@ public class RewardService {
 	private final String USERNAME = "jesuino";
 	private final String PASSWORD = "redhat2014!";
 	private final String PROCESS_ID = "com.sample.rewards-basic";
-	private final String SERVER_URL = "http://localhost:8080/business-central";
-
+	private final String SERVER_URL = "http://localhost:8080/jbpm-console";
+	
+	// jBPM classes
 	private RuntimeEngine engine;
 	private KieSession ksession;
 	private TaskService taskService;
