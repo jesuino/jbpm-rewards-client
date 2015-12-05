@@ -1,6 +1,14 @@
 # jbpm-rewards-client
 A client to handle a version of the `rewards process`(https://github.com/tkobayas/jbpm6example/tree/master/rewards-basic) remotely (with a few changes)
 
+## What you will find here?
+
+You will find the following meaningful files/directories on this project:
+
+* `rewards-client`: A JavaFX client application that uses the [jBPM remote API] to interact with a business process;
+* `rewards-project-1.0.jar`: The server side built artifact that contains the business process we are going to interact remotely;
+* `rewards-project`: The jBPM/BPM Suite built project that can be edited using Business Central/jBPM Web authoring web tools.
+
 ## Installing the rewards example locally
 
 Supposing you have BPM Suite or jBPM 6.x running locally in your machine, first you must install the artifact that contains the process in the maven repository uses by jBPM/BPM Suite 6.x. The artifact that contains the process is `rewards-project-1.0.jar` and can be found in the root directory of this project.
