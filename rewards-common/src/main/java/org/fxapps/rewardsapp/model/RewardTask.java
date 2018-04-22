@@ -1,5 +1,4 @@
-package org.jugvale.rewardclient;
-
+package org.fxapps.rewardsapp.model;
 import java.util.Date;
 
 public class RewardTask {

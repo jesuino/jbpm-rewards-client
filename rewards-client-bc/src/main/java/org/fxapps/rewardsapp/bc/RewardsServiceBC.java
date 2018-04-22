@@ -1,4 +1,4 @@
-package org.jugvale.rewardclient;
+package org.fxapps.rewardsapp.bc;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.fxapps.rewardsapp.model.RewardTask;
+import org.fxapps.rewardsapp.service.RewardsService;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.audit.AuditService;
@@ -21,18 +23,12 @@ import org.kie.remote.client.api.RemoteRuntimeEngineFactory;
  * @author wsiqueir
  *
  */
-public class RewardService {
+public class RewardsServiceBC implements RewardsService {
 
-	
 	// jBPM Process and Project constants
-	private final String P_EMPLOYEE = "employeeName";
-	private final String P_RESULT = "result";
-	private final String T_APPROVAL_VAR = "_approval";
 	private final String LANG = "en-UK";
-	private final String DEPLOYMENT_ID = "example:rewards-project:1.0";
 	private final String USERNAME = "jesuino";
 	private final String PASSWORD = "redhat2014!";
-	private final String PROCESS_ID = "com.sample.rewards-basic";
 	private final String SERVER_URL = "http://localhost:8080/jbpm-console";
 	
 	// jBPM classes
@@ -41,9 +37,9 @@ public class RewardService {
 	private TaskService taskService;
 	private AuditService auditService;
 
-	private static RewardService instance;
+	private static RewardsServiceBC instance;
 
-	private RewardService() throws MalformedURLException {
+	private RewardsServiceBC() throws MalformedURLException {
 		engine = RemoteRuntimeEngineFactory.newRestBuilder()
 				.addDeploymentId(DEPLOYMENT_ID).addUserName(USERNAME)
 				.addPassword(PASSWORD).addUrl(new URL(SERVER_URL)).build();
@@ -95,9 +91,9 @@ public class RewardService {
 		auditService.clear();
 	}
 
-	public static RewardService getInstance() throws MalformedURLException {
+	public static RewardsServiceBC getInstance() throws MalformedURLException {
 		if (Objects.isNull(instance))
-			instance = new RewardService();
+			instance = new RewardsServiceBC();
 		return instance;
 	}
 

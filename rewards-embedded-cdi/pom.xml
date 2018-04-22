@@ -1,0 +1,89 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.fxapps.rewardsapp</groupId>
+		<artifactId>rewards-app</artifactId>
+		<version>1.0</version>
+	</parent>
+	<artifactId>rewards-embedded-cdi</artifactId>
+	<properties>
+		<weld.version>3.0.1.Final</weld.version>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<jbpm.version>6.5.0.Final-redhat-21</jbpm.version>
+		<hibernate.version>4.2.24.Final-redhat-1</hibernate.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.fxapps.rewardsapp</groupId>
+			<artifactId>rewards-common</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.fxapps.rewardsapp</groupId>
+			<artifactId>rewards-client-common</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!-- FOR CDI -->
+		<dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se-core</artifactId>
+			<version>${weld.version}</version>
+		</dependency>
+		<!-- JBPM SERVICES -->
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-kie-services</artifactId>
+			<version>${jbpm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-services-cdi</artifactId>
+			<version>${jbpm.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-workitems</artifactId>
+			<version>${jbpm.version}</version>
+		</dependency>
+		<!-- -->
+		<!-- FOR TRANSACTIONS -->
+		<dependency>
+			<groupId>org.codehaus.btm</groupId>
+			<artifactId>btm</artifactId>
+			<version>2.1.4</version>
+		</dependency>
+		<!-- IN MEMORY DATABASE -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.196</version>
+		</dependency>
+		<!-- OR USE MYSQL -->
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.6</version>
+		</dependency>
+		<!-- WE MUST HAVE SOME JPA PROVIDER IN THE CLASSPATH -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+		<!-- GIMME LOGGING IN THE CONSOLE -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+	</dependencies>
+</project>

@@ -1,6 +1,8 @@
-package org.jugvale.rewardclient;
+package org.fxapps.rewardsapp.bc;
 
-import javafx.application.Application;
+import org.fxapps.rewardsapp.model.RewardTask;
+import org.fxapps.rewardsapp.service.RewardsService;
+
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.scene.Scene;
@@ -19,28 +21,25 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-public class App extends Application {
+public class RewardsAppView {
 
-	static RewardService service;
-	
+	RewardsService service;
 	// Events
 	private Runnable UPDATE_TASKS;
 	private Runnable UPDATE_HISTORY_ACTION;
-		
+
 	// Panes
 	private TitledPane PNL_TASKS;
 
 	private Accordion ACCORDION_ACTIONS;
 
-	public static void main(String[] args) throws Exception {
-		service = RewardService.getInstance();
-		launch(args);
+	public RewardsAppView(RewardsService service, Stage stage) {
+		this.service = service;
+		buildAndLaunch(stage);
 	}
 
-	@Override
-	public void start(Stage stage) throws Exception {
-		ACCORDION_ACTIONS = new Accordion(giveReward(), tasks(),
-				history());
+	public void buildAndLaunch(Stage stage) {
+		ACCORDION_ACTIONS = new Accordion(giveReward(), tasks(), history());
 		Label lblTitle = new Label("Rewards APP");
 		lblTitle.setFont(Font.font(25));
 		Scene scene = new Scene(new VBox(lblTitle, ACCORDION_ACTIONS), 700, 600);
@@ -53,13 +52,13 @@ public class App extends Application {
 		TextField txtEmployeeName = new TextField();
 		txtEmployeeName.setPromptText("Suggest a reward for a colleague");
 		Button btnStartRewardsProcess = new Button("Start RewardProcess");
-		HBox hbGiveReward = new HBox(new Label("Colleague name"),
-				txtEmployeeName, btnStartRewardsProcess);
+		HBox hbGiveReward = new HBox(new Label("Colleague name"), txtEmployeeName, btnStartRewardsProcess);
 		hbGiveReward.setSpacing(15);
-		btnStartRewardsProcess.setOnAction(e -> { 
+		btnStartRewardsProcess.setOnAction(e -> {
 			service.startRewardProcess(txtEmployeeName.getText());
 			txtEmployeeName.setText("");
 			Platform.runLater(UPDATE_TASKS);
+			Platform.runLater(UPDATE_HISTORY_ACTION);
 			ACCORDION_ACTIONS.setExpandedPane(PNL_TASKS);
 		});
 		return new TitledPane("Give a Reward to someone!", hbGiveReward);
@@ -71,17 +70,13 @@ public class App extends Application {
 		HBox hbBottom = new HBox(chkApprove, btnSubmit);
 		TableView<RewardTask> tbl = new TableView<>();
 		VBox vbHistory = new VBox(tbl, hbBottom);
-		tbl.getColumns().add(
-				propertyColumn("Employee Name", "employeeName", 130));
+		tbl.getColumns().add(propertyColumn("Employee Name", "employeeName", 130));
 		tbl.getColumns().add(propertyColumn("Created On", "created", 260));
 		tbl.getColumns().add(propertyColumn("Name", "name", 160));
 		hbBottom.setSpacing(20);
 		vbHistory.setSpacing(10);
-		UPDATE_TASKS = () -> {
-			tbl.getItems().setAll(service.getTasks());
-		};
-		BooleanBinding selected = tbl.getSelectionModel()
-				.selectedItemProperty().isNull();
+		UPDATE_TASKS = () -> tbl.getItems().setAll(service.getTasks());
+		BooleanBinding selected = tbl.getSelectionModel().selectedItemProperty().isNull();
 		chkApprove.disableProperty().bind(selected);
 		btnSubmit.disableProperty().bind(selected);
 		btnSubmit.setOnAction(e -> {
@@ -100,8 +95,7 @@ public class App extends Application {
 		Button btnClear = new Button("Clear");
 		VBox vbHistory = new VBox(btnClear, listHistory);
 		vbHistory.setSpacing(15);
-		UPDATE_HISTORY_ACTION = () -> listHistory.getItems()
-				.setAll(service.getAllProcessesSummary());
+		UPDATE_HISTORY_ACTION = () -> listHistory.getItems().setAll(service.getAllProcessesSummary());
 
 		btnClear.setOnAction(e -> {
 			service.clearHistory();
@@ -111,8 +105,7 @@ public class App extends Application {
 		return new TitledPane("Rewards history", vbHistory);
 	}
 
-	private TableColumn<RewardTask, ?> propertyColumn(String title,
-			String property, int width) {
+	private TableColumn<RewardTask, ?> propertyColumn(String title, String property, int width) {
 		TableColumn<RewardTask, String> column = new TableColumn<>(title);
 		column.setCellValueFactory(new PropertyValueFactory<>(property));
 		column.setMinWidth(width);
