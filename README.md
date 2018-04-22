@@ -1,4 +1,4 @@
-# jbpm-rewards-client
+# jBPM Rewards applications
 A client to handle a version of the `rewards process`(https://github.com/tkobayas/jbpm6example/tree/master/rewards-basic) remotely (with a few changes)
 
 ## What you will find here?
